@@ -28,32 +28,41 @@ import android.widget.ListView;
  */
 public class MainActivity extends ListActivity {
 
-    private String[] examples = new String[]{"Default", "Empty content", "Custom layout"};
+	private String[] examples = new String[] { "Default", "Empty content",
+			"Custom layout", "Error occured" };
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, examples);
-        setListAdapter(arrayAdapter);
-    }
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this,
+				android.R.layout.simple_list_item_1, examples);
+		setListAdapter(arrayAdapter);
+	}
 
-    @Override
-    protected void onListItemClick(ListView l, View v, int position, long id) {
-        Intent intent = new Intent(this, ProgressActivity.class);
-        intent.putExtra(ProgressActivity.EXTRA_TITLE, examples[position]);
-        switch (position) {
-            case 0:
-                intent.putExtra(ProgressActivity.EXTRA_FRAGMENT, ProgressActivity.FRAGMENT_DEFAULT);
-                break;
-            case 1:
-                intent.putExtra(ProgressActivity.EXTRA_FRAGMENT, ProgressActivity.FRAGMENT_EMPTY_CONTENT);
-                break;
-            case 2:
-                intent.putExtra(ProgressActivity.EXTRA_FRAGMENT, ProgressActivity.FRAGMENT_CUSTOM_LAYOUT);
-                break;
-            default:
-                break;
-        }
-        startActivity(intent);
-    }
+	@Override
+	protected void onListItemClick(ListView l, View v, int position, long id) {
+		Intent intent = new Intent(this, ProgressActivity.class);
+		intent.putExtra(ProgressActivity.EXTRA_TITLE, examples[position]);
+		switch (position) {
+		case 0:
+			intent.putExtra(ProgressActivity.EXTRA_FRAGMENT,
+					ProgressActivity.FRAGMENT_DEFAULT);
+			break;
+		case 1:
+			intent.putExtra(ProgressActivity.EXTRA_FRAGMENT,
+					ProgressActivity.FRAGMENT_EMPTY_CONTENT);
+			break;
+		case 2:
+			intent.putExtra(ProgressActivity.EXTRA_FRAGMENT,
+					ProgressActivity.FRAGMENT_CUSTOM_LAYOUT);
+			break;
+		case 3:
+			intent.putExtra(ProgressActivity.EXTRA_FRAGMENT,
+					ProgressActivity.FRAGMENT_ERROR_OCCURED);
+			break;
+		default:
+			break;
+		}
+		startActivity(intent);
+	}
 }

@@ -32,6 +32,7 @@ public class ProgressActivity extends FragmentActivity {
     public static final int FRAGMENT_DEFAULT = 0;
     public static final int FRAGMENT_EMPTY_CONTENT = 1;
     public static final int FRAGMENT_CUSTOM_LAYOUT = 2;
+    public static final int FRAGMENT_ERROR_OCCURED = 3;
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     @Override
@@ -56,6 +57,9 @@ public class ProgressActivity extends FragmentActivity {
                 case FRAGMENT_CUSTOM_LAYOUT:
                     fragment = CustomLayoutProgressFragment.newInstance();
                     break;
+                case FRAGMENT_ERROR_OCCURED:
+                	fragment = ErrorProgressFragment.newInstance();
+                	break;
                 default:
                     fragment = DefaultProgressFragment.newInstance();
                     break;
