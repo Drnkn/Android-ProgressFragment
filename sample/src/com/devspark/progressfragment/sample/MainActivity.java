@@ -29,7 +29,7 @@ import android.widget.ListView;
 public class MainActivity extends ListActivity {
 
 	private String[] examples = new String[] { "Default", "Empty content",
-			"Custom layout", "Error occured" };
+			"Custom layout", "Error occured", "Content switcher" };
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +59,10 @@ public class MainActivity extends ListActivity {
 		case 3:
 			intent.putExtra(ProgressActivity.EXTRA_FRAGMENT,
 					ProgressActivity.FRAGMENT_ERROR_OCCURED);
+			break;
+		case 4:
+			intent.putExtra(ProgressActivity.EXTRA_FRAGMENT,
+					ProgressActivity.FRAGMENT_CONTENT_SWITCHER);
 			break;
 		default:
 			break;
