@@ -20,7 +20,7 @@ public class ContentSwitcherFragment extends Fragment {
 
 		@Override
 		public void run() {
-			mContentSwitcher.setContentEmpty(true);
+			mContentSwitcher.setErrorOccured(true);
 			mContentSwitcher.setContentShown(true);
 		}
 
@@ -49,8 +49,8 @@ public class ContentSwitcherFragment extends Fragment {
 		super.onActivityCreated(savedInstanceState);
 		mContentSwitcher = new ContentSwitcher(getActivity());
 		mContentSwitcher.setRootView(getView());
-		// Setup content view
-		mContentSwitcher.setContentView(mContentView);
+		// Add content view to layout
+		mContentSwitcher.addContentView(mContentView);
 		// Setup error message
 		mContentSwitcher.setErrorText(R.string.error);
 		obtainData();

@@ -21,8 +21,6 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AnimationUtils;
-import android.widget.TextView;
 
 /**
  * The implementation of the fragment to display content. Based on
@@ -34,14 +32,13 @@ import android.widget.TextView;
  */
 public class ProgressFragment extends Fragment {
 
-	private View mProgressContainer;
-	private View mContentContainer;
-	private View mContentView;
-	private View mEmptyView;
-	private View mErrorView;
-	private boolean mContentShown;
-	private boolean mIsContentEmpty;
-	private boolean mIsErrorOccurred;
+	private ContentSwitcher mContentSwitcher;
+
+	@Override
+	public void onCreate(final Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		mContentSwitcher = new ContentSwitcher(getActivity());
+	}
 
 	/**
 	 * Provide default implementation to return a simple view. Subclasses can
@@ -62,7 +59,7 @@ public class ProgressFragment extends Fragment {
 	 */
 	@Override
 	public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
-			final Bundle savedInstanceState) {	
+			final Bundle savedInstanceState) {
 		return inflater.inflate(R.layout.fragment_progress, container, false);
 	}
 
@@ -72,7 +69,7 @@ public class ProgressFragment extends Fragment {
 	@Override
 	public void onViewCreated(final View view, final Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
-		ensureContent();
+		mContentSwitcher.setRootView(view);
 	}
 
 	/**
@@ -80,10 +77,7 @@ public class ProgressFragment extends Fragment {
 	 */
 	@Override
 	public void onDestroyView() {
-		mContentShown = false;
-		mIsContentEmpty = false;
-		mIsErrorOccurred = false;
-		mErrorView = mProgressContainer = mContentContainer = mContentView = mEmptyView = null;
+		mContentSwitcher.reset();
 		super.onDestroyView();
 	}
 
@@ -95,25 +89,23 @@ public class ProgressFragment extends Fragment {
 	 * @see #setContentView(int)
 	 */
 	public View getContentView() {
-		return mContentView;
+		return mContentSwitcher.getContentView();
 	}
 
 	/**
-	 * Set the content content from a layout resource.
+	 * Add the content content from a layout resource.
 	 * 
 	 * @param layoutResId
 	 *            Resource ID to be inflated.
 	 * @see #setContentView(android.view.View)
 	 * @see #getContentView()
 	 */
-	public void setContentView(final int layoutResId) {
-		LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
-		View contentView = layoutInflater.inflate(layoutResId, null);
-		setContentView(contentView);
+	public void addContentView(final int layoutResId) {
+		mContentSwitcher.addContentView(layoutResId);
 	}
 
 	/**
-	 * Set the content view to an explicit view. If the content view was
+	 * Add the content view to an explicit view. If the content view was
 	 * installed earlier, the content will be replaced with a new view.
 	 * 
 	 * @param view
@@ -121,25 +113,16 @@ public class ProgressFragment extends Fragment {
 	 * @see #setContentView(int)
 	 * @see #getContentView()
 	 */
-	public void setContentView(final View view) {
-		ensureContent();
-		if (view == null) {
-			throw new IllegalArgumentException("Content view can't be null");
-		}
-		if (mContentContainer instanceof ViewGroup) {
-			ViewGroup contentContainer = (ViewGroup) mContentContainer;
-			if (mContentView == null) {
-				contentContainer.addView(view);
-			} else {
-				final int index = contentContainer.indexOfChild(mContentView);
-				// replace content view
-				contentContainer.removeView(mContentView);
-				contentContainer.addView(view, index);
-			}
-			mContentView = view;
-		} else {
-			throw new IllegalStateException("Can't be used with a custom content view");
-		}
+	public void addContentView(final View view) {
+		mContentSwitcher.addContentView(view);
+	}
+
+	public void setContentView(final int contentViewId) {
+		mContentSwitcher.setContentView(contentViewId);
+	}
+
+	public void setContentView(final View contentView) {
+		mContentSwitcher.setContentView(contentView);
 	}
 
 	/**
@@ -153,7 +136,7 @@ public class ProgressFragment extends Fragment {
 	 * @see #setEmptyText(CharSequence)
 	 */
 	public void setEmptyText(final int resId) {
-		setEmptyText(getString(resId));
+		mContentSwitcher.setEmptyText(resId);
 	}
 
 	/**
@@ -167,23 +150,15 @@ public class ProgressFragment extends Fragment {
 	 * @see #setEmptyText(int)
 	 */
 	public void setEmptyText(final CharSequence text) {
-		ensureContent();
-		if (mEmptyView != null && mEmptyView instanceof TextView) {
-			((TextView) mEmptyView).setText(text);
-		} else {
-			throw new IllegalStateException("Can't be used with a custom content view");
-		}
+		mContentSwitcher.setEmptyText(text);
 	}
 
 	public void setErrorText(final int resId) {
-		setErrorText(getString(resId));
+		mContentSwitcher.setErrorText(resId);
 	}
 
 	public void setErrorText(final CharSequence text) {
-		ensureContent();
-		if (mErrorView != null && mErrorView instanceof TextView) {
-			((TextView) mEmptyView).setText(text);
-		}
+		mContentSwitcher.setErrorText(text);
 	}
 
 	/**
@@ -197,7 +172,7 @@ public class ProgressFragment extends Fragment {
 	 * @see #setContentShownNoAnimation(boolean)
 	 */
 	public void setContentShown(final boolean shown) {
-		setContentShown(shown, true);
+		mContentSwitcher.setContentShown(shown);
 	}
 
 	/**
@@ -210,53 +185,7 @@ public class ProgressFragment extends Fragment {
 	 * @see #setContentShown(boolean)
 	 */
 	public void setContentShownNoAnimation(final boolean shown) {
-		setContentShown(shown, false);
-	}
-
-	/**
-	 * Control whether the content is being displayed. You can make it not
-	 * displayed if you are waiting for the initial data to show in it. During
-	 * this time an indeterminant progress indicator will be shown instead.
-	 * 
-	 * @param shown
-	 *            If true, the content view is shown; if false, the progress
-	 *            indicator. The initial value is true.
-	 * @param animate
-	 *            If true, an animation will be used to transition to the new
-	 *            state.
-	 */
-	private void setContentShown(final boolean shown, final boolean animate) {
-		ensureContent();
-		if (mContentShown == shown) {
-			return;
-		}
-		mContentShown = shown;
-		if (shown) {
-			if (animate) {
-				mProgressContainer.startAnimation(AnimationUtils.loadAnimation(
-						getActivity(), android.R.anim.fade_out));
-				mContentContainer.startAnimation(AnimationUtils.loadAnimation(
-						getActivity(), android.R.anim.fade_in));
-			} else {
-				mProgressContainer.clearAnimation();
-				mContentContainer.clearAnimation();
-
-			}
-			mProgressContainer.setVisibility(View.GONE);
-			mContentContainer.setVisibility(View.VISIBLE);
-		} else {
-			if (animate) {
-				mProgressContainer.startAnimation(AnimationUtils.loadAnimation(
-						getActivity(), android.R.anim.fade_in));
-				mContentContainer.startAnimation(AnimationUtils.loadAnimation(
-						getActivity(), android.R.anim.fade_out));
-			} else {
-				mProgressContainer.clearAnimation();
-				mContentContainer.clearAnimation();
-			}
-			mProgressContainer.setVisibility(View.VISIBLE);
-			mContentContainer.setVisibility(View.GONE);
-		}
+		mContentSwitcher.setContentShownNoAnimation(shown);
 	}
 
 	/**
@@ -266,7 +195,7 @@ public class ProgressFragment extends Fragment {
 	 * @see #setContentEmpty(boolean)
 	 */
 	public boolean isContentEmpty() {
-		return mIsContentEmpty;
+		return mContentSwitcher.isContentEmpty();
 	}
 
 	/**
@@ -280,88 +209,14 @@ public class ProgressFragment extends Fragment {
 	 * @see #isContentEmpty()
 	 */
 	public void setContentEmpty(final boolean isEmpty) {
-		ensureContent();
-		if (mContentView == null) {
-			throw new IllegalStateException("Content view must be initialized before");
-		}
-		if (isEmpty) {
-			mEmptyView.setVisibility(View.VISIBLE);
-			mContentView.setVisibility(View.GONE);
-			setErrorViewVisibility(View.GONE);
-		} else {
-			mEmptyView.setVisibility(View.GONE);
-			mContentView.setVisibility(View.VISIBLE);
-			setErrorViewVisibility(View.GONE);
-		}
-		mIsContentEmpty = isEmpty;
+		mContentSwitcher.setContentEmpty(isEmpty);
 	}
 
 	public void setErrorOccured(final boolean error) {
-		if (mErrorView == null) {
-			throw new IllegalStateException(
-					"Error view should be specified in layout before");
-		}
-		if (mContentView == null) {
-			throw new IllegalStateException("Content view must be initialized before");
-		}
-
-		if (error) {
-			mErrorView.setVisibility(View.VISIBLE);
-			mEmptyView.setVisibility(View.GONE);
-			mContentView.setVisibility(View.GONE);
-		} else {
-			mErrorView.setVisibility(View.GONE);
-			mEmptyView.setVisibility(View.GONE);
-			mContentView.setVisibility(View.VISIBLE);
-		}
-		mIsErrorOccurred = error;
+		mContentSwitcher.setErrorOccured(error);
 	}
 
 	public boolean isErrorOccured() {
-		return mIsErrorOccurred;
+		return mContentSwitcher.isErrorOccured();
 	}
-
-	/**
-	 * Initialization views.
-	 */
-	private void ensureContent() {
-		if (mContentContainer != null && mProgressContainer != null) {
-			return;
-		}
-		View root = getView();
-		if (root == null) {
-			throw new IllegalStateException("Content view not yet created");
-		}
-		mProgressContainer = root.findViewById(R.id.progress_container);
-		if (mProgressContainer == null) {
-			throw new RuntimeException(
-					"Your content must have a ViewGroup whose id attribute is 'R.id.progress_container'");
-		}
-		mContentContainer = root.findViewById(R.id.content_container);
-		if (mContentContainer == null) {
-			throw new RuntimeException(
-					"Your content must have a ViewGroup whose id attribute is 'R.id.content_container'");
-		}
-		mEmptyView = root.findViewById(android.R.id.empty);
-		if (mEmptyView != null) {
-			mEmptyView.setVisibility(View.GONE);
-		}
-		mErrorView = root.findViewById(R.id.error);
-		if (mErrorView != null) {
-			mErrorView.setVisibility(View.GONE);
-		}
-		mContentShown = true;
-		// We are starting without a content, so assume we won't
-		// have our data right away and start with the progress indicator.
-		if (mContentView == null) {
-			setContentShown(false, false);
-		}
-	}
-
-	private void setErrorViewVisibility(final int visibility) {
-		if (mErrorView != null) {
-			mErrorView.setVisibility(visibility);
-		}
-	}
-
 }

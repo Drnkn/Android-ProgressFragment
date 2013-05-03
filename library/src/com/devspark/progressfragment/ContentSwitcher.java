@@ -28,8 +28,8 @@ public class ContentSwitcher {
 	 * Return content view or null if the content view has not been initialized.
 	 * 
 	 * @return content view or null
-	 * @see #setContentView(android.view.View)
-	 * @see #setContentView(int)
+	 * @see #addContentView(android.view.View)
+	 * @see #addContentView(int)
 	 */
 	public View getContentView() {
 		return mContentView;
@@ -40,13 +40,13 @@ public class ContentSwitcher {
 	 * 
 	 * @param layoutResId
 	 *            Resource ID to be inflated.
-	 * @see #setContentView(android.view.View)
+	 * @see #addContentView(android.view.View)
 	 * @see #getContentView()
 	 */
-	public void setContentView(final int layoutResId) {
+	public void addContentView(final int layoutResId) {
 		final LayoutInflater layoutInflater = LayoutInflater.from(mContext);
 		final View contentView = layoutInflater.inflate(layoutResId, null);
-		setContentView(contentView);
+		addContentView(contentView);
 	}
 
 	/**
@@ -55,10 +55,10 @@ public class ContentSwitcher {
 	 * 
 	 * @param view
 	 *            The desired content to display. Value can't be null.
-	 * @see #setContentView(int)
+	 * @see #addContentView(int)
 	 * @see #getContentView()
 	 */
-	public void setContentView(final View view) {
+	public void addContentView(final View view) {
 		ensureContent();
 		if (view == null) {
 			throw new IllegalArgumentException("Content view can't be null");
@@ -77,6 +77,33 @@ public class ContentSwitcher {
 		} else {
 			throw new IllegalStateException("Can't be used with a custom content view");
 		}
+	}
+
+	public void setContentView(final int contentViewId) {
+		ensureContent();
+		if (mRootView == null) {
+			throw new IllegalStateException("Root view not yet set");
+		}
+		if (mContentContainer instanceof ViewGroup) {
+			mContentView = mRootView.findViewById(contentViewId);
+		} else {
+			throw new IllegalStateException("Can't be used with a custom content view");
+		}
+		if (mContentView == null) {
+			throw new IllegalStateException("View with id "
+					+ Integer.toHexString(contentViewId) + " wasn't found");
+		}
+	}
+
+	public void setContentView(final View contentView) {
+		ensureContent();
+		if (mRootView == null) {
+			throw new IllegalStateException("Root view not yet set");
+		}
+		if (contentView == null) {
+			throw new IllegalStateException("Content view can't be null");
+		}
+		mContentView = contentView;
 	}
 
 	/**
@@ -120,6 +147,8 @@ public class ContentSwitcher {
 		ensureContent();
 		if (mErrorView != null && mErrorView instanceof TextView) {
 			((TextView) mEmptyView).setText(text);
+		} else {
+			throw new IllegalStateException("Can't be used with a custom content view");
 		}
 	}
 
@@ -163,7 +192,7 @@ public class ContentSwitcher {
 	/**
 	 * If the content is empty, then set true otherwise false. The default
 	 * content is not empty. You can't call this method if the content view has
-	 * not been initialized before {@link #setContentView(android.view.View)}
+	 * not been initialized before {@link #addContentView(android.view.View)}
 	 * and content view not null.
 	 * 
 	 * @param isEmpty
@@ -215,6 +244,13 @@ public class ContentSwitcher {
 
 	public boolean isErrorOccured() {
 		return mIsErrorOccurred;
+	}
+
+	public void reset() {
+		mContentShown = false;
+		mIsContentEmpty = false;
+		mIsErrorOccurred = false;
+		mErrorView = mProgressContainer = mContentContainer = mContentView = mEmptyView = null;
 	}
 
 	private void setContentShown(final boolean shown, final boolean animate) {

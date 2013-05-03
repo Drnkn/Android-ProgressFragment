@@ -58,8 +58,8 @@ public class DefaultProgressFragment extends ProgressFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        // Setup content view
-        setContentView(mContentView);
+        // Add content view to layout
+        addContentView(mContentView);
         // Setup text for empty content
         setEmptyText(R.string.empty);
         obtainData();
