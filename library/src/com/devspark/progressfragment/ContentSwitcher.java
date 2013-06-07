@@ -1,6 +1,7 @@
 package com.devspark.progressfragment;
 
 import android.content.Context;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +20,17 @@ public class ContentSwitcher {
 	private boolean mContentShown;
 	private boolean mIsContentEmpty;
 	private boolean mIsErrorOccurred;
+	private int mAnimationIn = android.R.anim.fade_in;
+	private int mAnimationOut = android.R.anim.fade_out;
+
+	public static ContentSwitcher prepare(final Context context, final Fragment fragment) {
+		final ContentSwitcher contentSwicher = new ContentSwitcher(context);
+		contentSwicher.setRootView(fragment.getView());
+		final View contentView = contentSwicher.findContentView();
+		contentSwicher.setContentView(contentView);
+
+		return contentSwicher;
+	}
 
 	public ContentSwitcher(final Context context) {
 		mContext = context;
@@ -253,6 +265,11 @@ public class ContentSwitcher {
 		mErrorView = mProgressContainer = mContentContainer = mContentView = mEmptyView = null;
 	}
 
+	public void setCustomAnimation(final int animationIn, final int animationOut) {
+		mAnimationIn = animationIn;
+		mAnimationOut = animationOut;
+	}
+
 	private void setContentShown(final boolean shown, final boolean animate) {
 		ensureContent();
 		if (mContentShown == shown) {
@@ -262,9 +279,9 @@ public class ContentSwitcher {
 		if (shown) {
 			if (animate) {
 				mProgressContainer.startAnimation(AnimationUtils.loadAnimation(mContext,
-						android.R.anim.fade_out));
+						mAnimationOut));
 				mContentContainer.startAnimation(AnimationUtils.loadAnimation(mContext,
-						android.R.anim.fade_in));
+						mAnimationIn));
 			} else {
 				mProgressContainer.clearAnimation();
 				mContentContainer.clearAnimation();
@@ -275,9 +292,9 @@ public class ContentSwitcher {
 		} else {
 			if (animate) {
 				mProgressContainer.startAnimation(AnimationUtils.loadAnimation(mContext,
-						android.R.anim.fade_in));
+						mAnimationIn));
 				mContentContainer.startAnimation(AnimationUtils.loadAnimation(mContext,
-						android.R.anim.fade_out));
+						mAnimationOut));
 			} else {
 				mProgressContainer.clearAnimation();
 				mContentContainer.clearAnimation();
@@ -324,6 +341,21 @@ public class ContentSwitcher {
 		if (mErrorView != null) {
 			mErrorView.setVisibility(visibility);
 		}
+	}
+
+	private View findContentView() {
+		View contentView = null;
+		final ViewGroup contentContainer = (ViewGroup) mContentContainer;
+		final int childCount = contentContainer.getChildCount();
+		for (int i = 0; i < childCount; i++) {
+			final View view = contentContainer.getChildAt(i);
+			if (view != mEmptyView && view != mErrorView) {
+				contentView = view;
+				break;
+			}
+		}
+
+		return contentView;
 	}
 
 }

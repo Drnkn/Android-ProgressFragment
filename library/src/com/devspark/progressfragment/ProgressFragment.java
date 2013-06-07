@@ -219,4 +219,8 @@ public class ProgressFragment extends Fragment {
 	public boolean isErrorOccured() {
 		return mContentSwitcher.isErrorOccured();
 	}
+
+	public void setCustomAnimation(final int animationIn, final int animationOut) {
+		mContentSwitcher.setCustomAnimation(animationIn, animationOut);
+	}
 }

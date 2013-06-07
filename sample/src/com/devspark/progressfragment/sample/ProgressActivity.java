@@ -34,6 +34,7 @@ public class ProgressActivity extends FragmentActivity {
 	public static final int FRAGMENT_CUSTOM_LAYOUT = 2;
 	public static final int FRAGMENT_ERROR_OCCURED = 3;
 	public static final int FRAGMENT_CONTENT_SWITCHER = 4;
+	public static final int FRAGMENT_PREPARE_CONTENT = 5;
 
 	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 	@Override
@@ -64,6 +65,9 @@ public class ProgressActivity extends FragmentActivity {
 				break;
 			case FRAGMENT_CONTENT_SWITCHER:
 				fragment = ContentSwitcherFragment.newInstance();
+				break;
+			case FRAGMENT_PREPARE_CONTENT:
+				fragment = PrepareSwitcher.newInstance();
 				break;
 			default:
 				fragment = DefaultProgressFragment.newInstance();

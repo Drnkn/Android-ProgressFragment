@@ -26,10 +26,10 @@ import android.widget.ListView;
 /**
  * @author Evgeny Shishkin
  */
-public class MainActivity extends ListActivity {
+public class ProgressFragmentSamples extends ListActivity {
 
 	private String[] examples = new String[] { "Default", "Empty content",
-			"Custom layout", "Error occured", "Content switcher" };
+			"Custom layout", "Error occured", "Content switcher", "Prepare switcher" };
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +63,10 @@ public class MainActivity extends ListActivity {
 		case 4:
 			intent.putExtra(ProgressActivity.EXTRA_FRAGMENT,
 					ProgressActivity.FRAGMENT_CONTENT_SWITCHER);
+			break;
+		case 5:
+			intent.putExtra(ProgressActivity.EXTRA_FRAGMENT,
+					ProgressActivity.FRAGMENT_PREPARE_CONTENT);
 			break;
 		default:
 			break;
