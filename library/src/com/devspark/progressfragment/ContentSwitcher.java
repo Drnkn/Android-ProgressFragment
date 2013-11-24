@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.widget.TextView;
@@ -268,6 +269,28 @@ public class ContentSwitcher {
 	public void setCustomAnimation(final int animationIn, final int animationOut) {
 		mAnimationIn = animationIn;
 		mAnimationOut = animationOut;
+	}
+
+	public void setOnErrorViewClickListener(final OnClickListener onClickListener) {
+		if (mErrorView == null) {
+			throw new IllegalStateException("Error view couldn't be null");
+		}
+
+		mErrorView.setOnClickListener(onClickListener);
+	}
+
+	public void setOnErrorViewClickListener(final OnClickListener onClickListener,
+			final int resId) {
+		if (mErrorView == null) {
+			throw new IllegalStateException("Error view couldn't be null");
+		}
+
+		final View targetView = mErrorView.findViewById(resId);
+		if (targetView == null) {
+			throw new IllegalArgumentException("View with id " + resId + "wasn't found");
+		}
+
+		targetView.setOnClickListener(onClickListener);
 	}
 
 	private void setContentShown(final boolean shown, final boolean animate) {
