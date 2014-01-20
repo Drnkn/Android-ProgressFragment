@@ -1,58 +1,45 @@
-# Copyright: Benjamin Weiss (keyboardsurfer) https://github.com/keyboardsurfer
-# Under CC-BY-SA V3.0 (https://creativecommons.org/licenses/by-sa/3.0/legalcode)
- 
-# built application files
-*.apk
-*.ap_
-*.jar
- 
-# lint folder
-lint
- 
-# files for the dex VM
-*.dex
- 
-# Java class files
-*.class
- 
-# generated files
-bin/
-gen/
-classes/
-gen-external-apklibs/
- 
-# maven output folder
-target
- 
-# Local configuration file (sdk path, etc)
-local.properties
- 
-# Eclipse project files
-.classpath
+#Android generated
+bin
+gen
+lint.xml
+
+
+#Eclipse
 .project
-.metadata
+.classpath
 .settings
- 
-# IntelliJ files
-.idea
-*.iml
- 
-# OSX files
+.checkstyle
+
+#Maven
+target
+release.properties
+pom.xml.*
+
+#Ant
+build.xml
+ant.properties
+local.properties
+proguard.cfg
+proguard-project.txt
+
+#Other
 .DS_Store
- 
-# Windows files
-Thumbs.db
- 
-# vi swap files
-*.swp
- 
-# backup files
-*.bak
- 
-# gradle directory
+#svn
+.svn
+
+# Android Studio
+.idea/
 .gradle
-gradlew
-gradlew.bat
-gradle/
-build/
-/.svn
+gradle
+/*/local.properties
+/*/out
+/*/*/build
+/*/*/production
+*.iml
+*.iws
+*.ipr
+*~
+*.swp
+/gradlew.bat
+/gradlew
+build
