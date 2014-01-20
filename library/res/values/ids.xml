@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- View id for content and other views container -->
+    <item name="content_container" type="id" />
+    <!-- View id for progress view -->
+    <item name="progress_view" type="id" />
+    <!-- View id for content view -->
+    <item name="content_view" type="id" />
+    <!-- View id for empty view -->
+    <item name="empty_view" type="id" />
+    <!-- View id for error view -->
+    <item name="error_view" type="id" />
+
+</resources>
