@@ -26,7 +26,7 @@ import android.widget.ListView;
 /**
  * @author Evgeny Shishkin
  */
-public class ProgressFragmentSamples extends ListActivity {
+public class ProgressSamplesActivity extends ListActivity {
 
     private String[] examples = new String[]{"From root", "From content", "Progress widget"};
 
