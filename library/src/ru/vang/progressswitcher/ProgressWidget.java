@@ -28,6 +28,9 @@ public class ProgressWidget extends FrameLayout implements Switcher {
 
         final TypedArray typedArray = context.obtainStyledAttributes(attrs,
                 R.styleable.ProgressWidget, 0, 0);
+        if (typedArray == null) {
+            return;
+        }
         try {
             final LayoutInflater inflater = LayoutInflater.from(context);
 
