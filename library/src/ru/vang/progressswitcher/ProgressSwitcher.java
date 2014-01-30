@@ -25,28 +25,43 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 public class ProgressSwitcher implements Switcher {
+
     public static final int TYPE_PROGRESS = 0;
+
     public static final int TYPE_CONTENT = 1;
+
     public static final int TYPE_EMPTY = 2;
+
     public static final int TYPE_ERROR = 3;
 
     private static int sDefaultProgressView = R.layout.progress_view;
+
     private static int sDefaultEmptyView = R.layout.empty_view;
+
     private static int sDefaultErrorView = R.layout.error_view;
 
     static final int DEFAULT_ANIMATION_IN = android.R.anim.fade_in;
+
     static final int DEFAULT_ANIMATION_OUT = android.R.anim.fade_out;
 
     private Context mContext;
+
     private ViewGroup mContentContainer;
+
     private View mProgressView;
+
     private View mContentView;
+
     private View mEmptyView;
+
     private View mErrorView;
+
     private View mShownView;
+
     private int mContentTypeShown = TYPE_PROGRESS;
 
     private int mAnimationIn = DEFAULT_ANIMATION_IN;
+
     private int mAnimationOut = DEFAULT_ANIMATION_OUT;
 
     ProgressSwitcher(final Context context) {
@@ -55,7 +70,7 @@ public class ProgressSwitcher implements Switcher {
 
     private ProgressSwitcher(final Context context, final View rootView) {
         mContext = context;
-        initViews(rootView);
+        initViewsFromRoot(rootView);
     }
 
     public static ProgressSwitcher fromRootView(final Context context, final View rootView) {
@@ -144,6 +159,7 @@ public class ProgressSwitcher implements Switcher {
             throw new IllegalStateException("View with id "
                     + Integer.toHexString(contentViewId) + " wasn't found");
         }
+        mContentView.setVisibility(View.GONE);
     }
 
     @Override
@@ -158,6 +174,7 @@ public class ProgressSwitcher implements Switcher {
                     + " wasn't found in content container");
         }
         mContentView = contentView;
+        mContentView.setVisibility(View.GONE);
     }
 
     @Override
@@ -307,7 +324,7 @@ public class ProgressSwitcher implements Switcher {
 
     @Override
     public void setOnErrorViewClickListener(final OnClickListener onClickListener,
-                                            final int viewId) {
+            final int viewId) {
         if (mErrorView == null) {
             throw new IllegalStateException("Error view should be provided in layout");
         }
@@ -340,22 +357,30 @@ public class ProgressSwitcher implements Switcher {
         mAnimationOut = animationOut;
     }
 
+    void setRootView(final View rootView) {
+        initViewsFromRoot(rootView);
+    }
+
+    void setContentContainer(final View content) {
+        initViewFromContentContainer(content);
+    }
+
     void reset() {
         mContentTypeShown = TYPE_PROGRESS;
         mErrorView = mProgressView = mContentView = mEmptyView = null;
         mContentContainer = null;
     }
 
-    void setRootView(final View rootView) {
-        initViews(rootView);
-    }
-
-    private void initViews(final View rootView) {
+    private void initViewsFromRoot(final View rootView) {
         if (rootView == null) {
             throw new NullPointerException("Root view can't be null");
         }
 
         final View container = rootView.findViewById(R.id.content_container);
+        initViewFromContentContainer(container);
+    }
+
+    private void initViewFromContentContainer(final View container) {
         if (container == null) {
             throw new NullPointerException(
                     "Container with id content_container should be provided in layout");
@@ -365,10 +390,7 @@ public class ProgressSwitcher implements Switcher {
                     "Content container should be derived from ViewGroup");
         }
         mContentContainer = (ViewGroup) container;
-        mProgressView = rootView.findViewById(R.id.progress_view);
-        mContentView = rootView.findViewById(R.id.content_view);
-        mEmptyView = rootView.findViewById(R.id.empty_view);
-        mErrorView = rootView.findViewById(R.id.error_view);
+        ensureContent();
     }
 
     private void ensureContent() {
@@ -378,10 +400,10 @@ public class ProgressSwitcher implements Switcher {
         if (mContentContainer == null) {
             throw new IllegalStateException("Content container not yet set");
         }
-        mContentView = mContentContainer.findViewById(R.id.content_view);
         mProgressView = mContentContainer.findViewById(R.id.progress_view);
-        if (mProgressView != null) {
-            mProgressView.setVisibility(View.GONE);
+        mContentView = mContentContainer.findViewById(R.id.content_view);
+        if (mContentView != null) {
+            mContentView.setVisibility(View.GONE);
         }
         mEmptyView = mContentContainer.findViewById(R.id.empty_view);
         if (mEmptyView != null) {
@@ -457,7 +479,7 @@ public class ProgressSwitcher implements Switcher {
     }
 
     private void setOnClickListenerToView(final View view,
-                                          final OnClickListener onClickListener, final int viewId) {
+            final OnClickListener onClickListener, final int viewId) {
         final View targetView = view.findViewById(viewId);
         if (targetView == null) {
             throw new IllegalArgumentException("View with id "
@@ -470,10 +492,15 @@ public class ProgressSwitcher implements Switcher {
     public static class Builder {
 
         private Context mContext;
+
         private final FrameLayout mRootView;
+
         private View mContentView;
+
         private View mProgressView;
+
         private View mEmptyView;
+
         private View mErrorView;
 
         public Builder(final Context context) {
@@ -534,7 +561,7 @@ public class ProgressSwitcher implements Switcher {
         public Builder setErrorView(final int errorViewResId) {
             final View errorView = inflateViewFromResource(errorViewResId);
 
-            return setEmptyView(errorView);
+            return setErrorView(errorView);
         }
 
         public Builder setErrorView(final View errorView) {
@@ -542,7 +569,7 @@ public class ProgressSwitcher implements Switcher {
                 throw new NullPointerException("Error view couldn't be null");
             }
 
-            mEmptyView = errorView;
+            mErrorView = errorView;
 
             return this;
         }

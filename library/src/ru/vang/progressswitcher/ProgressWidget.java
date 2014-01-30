@@ -10,6 +10,9 @@ import android.widget.FrameLayout;
 public class ProgressWidget extends FrameLayout implements Switcher {
 
     private ProgressSwitcher mProgressSwitcher;
+    private int mProgressViewResId;
+    private int mEmptyViewResId;
+    private int mErrorViewResId;
 
     private ProgressWidget(final Context context) {
         super(context);
@@ -20,10 +23,9 @@ public class ProgressWidget extends FrameLayout implements Switcher {
     }
 
     public ProgressWidget(final Context context, final AttributeSet attrs,
-                          final int defStyle) {
+            final int defStyle) {
         super(context, attrs, defStyle);
 
-        setId(R.id.content_container);
         mProgressSwitcher = new ProgressSwitcher(context);
 
         final TypedArray typedArray = context.obtainStyledAttributes(attrs,
@@ -32,31 +34,21 @@ public class ProgressWidget extends FrameLayout implements Switcher {
             return;
         }
         try {
-            final LayoutInflater inflater = LayoutInflater.from(context);
-
-            final FrameLayout rootView = new FrameLayout(context);
-            rootView.setLayoutParams(new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
-            rootView.setId(R.id.content_container);
-
-            final int progressViewLayoutId = typedArray.getResourceId(
+            mProgressViewResId = typedArray.getResourceId(
                     R.styleable.ProgressWidget_progressViewLayout,
                     R.layout.progress_view);
-            inflater.inflate(progressViewLayoutId, rootView);
-
-            final int errorViewLayoutId = typedArray.getResourceId(
+            mErrorViewResId = typedArray.getResourceId(
                     R.styleable.ProgressWidget_errorViewLayout,
                     R.layout.error_view);
-            inflater.inflate(errorViewLayoutId, rootView);
-
-            final int emptyViewLayoutId = typedArray.getResourceId(
+            mEmptyViewResId = typedArray.getResourceId(
                     R.styleable.ProgressWidget_emptyViewLayout,
                     R.layout.error_view);
-            inflater.inflate(emptyViewLayoutId, rootView);
 
-            addView(rootView);
-
-            final int animationIn = typedArray.getResourceId(R.styleable.ProgressWidget_animationIn, ProgressSwitcher.DEFAULT_ANIMATION_IN);
-            final int animationOut = typedArray.getResourceId(R.styleable.ProgressWidget_animationOut, ProgressSwitcher.DEFAULT_ANIMATION_OUT);
+            final int animationIn = typedArray.getResourceId(R.styleable.ProgressWidget_animationIn,
+                    ProgressSwitcher.DEFAULT_ANIMATION_IN);
+            final int animationOut = typedArray
+                    .getResourceId(R.styleable.ProgressWidget_animationOut,
+                            ProgressSwitcher.DEFAULT_ANIMATION_OUT);
             mProgressSwitcher.setCustomAnimation(animationIn, animationOut);
         } finally {
             typedArray.recycle();
@@ -66,7 +58,23 @@ public class ProgressWidget extends FrameLayout implements Switcher {
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
-        mProgressSwitcher.setRootView(this);
+
+        if (getChildCount() == 0) {
+            throw new IllegalStateException("Content child must be provided");
+        }
+        if (getChildCount() > 2) {
+            throw new IllegalStateException(ProgressWidget.class.getSimpleName()
+                    + " supports only one content child");
+        }
+
+        final View content = getChildAt(0);
+        final LayoutInflater inflater = LayoutInflater.from(getContext());
+        inflater.inflate(mProgressViewResId, this);
+        inflater.inflate(mEmptyViewResId, this);
+        inflater.inflate(mErrorViewResId, this);
+
+        mProgressSwitcher.setContentContainer(this);
+        mProgressSwitcher.setContentView(content);
     }
 
     @Override
@@ -86,12 +94,12 @@ public class ProgressWidget extends FrameLayout implements Switcher {
 
     @Override
     public void setContentView(final int contentViewId) {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("Content view must be set through xml");
     }
 
     @Override
     public void setContentView(final View contentView) {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("Content view must be set through xml");
     }
 
     @Override
@@ -107,7 +115,6 @@ public class ProgressWidget extends FrameLayout implements Switcher {
     @Override
     public void setEmptyText(final int resId, final int viewId) {
         mProgressSwitcher.setEmptyText(resId, viewId);
-
     }
 
     @Override
@@ -143,11 +150,11 @@ public class ProgressWidget extends FrameLayout implements Switcher {
     @Override
     public void setOnEmptyViewClickListener(final OnClickListener onClickListener) {
         mProgressSwitcher.setOnEmptyViewClickListener(onClickListener);
-
     }
 
     @Override
-    public void setOnEmptyViewClickListener(final OnClickListener onClickListener, final int viewId) {
+    public void setOnEmptyViewClickListener(final OnClickListener onClickListener,
+            final int viewId) {
         mProgressSwitcher.setOnEmptyViewClickListener(onClickListener, viewId);
     }
 
@@ -158,7 +165,7 @@ public class ProgressWidget extends FrameLayout implements Switcher {
 
     @Override
     public void setOnErrorViewClickListener(final OnClickListener onClickListener,
-                                            final int resId) {
+            final int resId) {
         mProgressSwitcher.setOnErrorViewClickListener(onClickListener, resId);
     }
 

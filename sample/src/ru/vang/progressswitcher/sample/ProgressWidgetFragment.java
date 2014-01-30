@@ -6,14 +6,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import ru.vang.progressswitcher.ProgressSwitcher;
+import ru.vang.progressswitcher.ProgressWidget;
 
-/**
- * Created by Vang on 16.01.14.
- */
 public class ProgressWidgetFragment extends Fragment implements View.OnClickListener {
 
-    private ProgressSwitcher mProgressSwitcher;
+    private ProgressWidget mProgressWidget;
 
     public static ProgressWidgetFragment newInstance() {
         final ProgressWidgetFragment fragment = new ProgressWidgetFragment();
@@ -27,6 +24,9 @@ public class ProgressWidgetFragment extends Fragment implements View.OnClickList
         final View view = inflater.inflate(R.layout.fragment_progress_widget,
                 container, false);
 
+        mProgressWidget = (ProgressWidget) view.findViewById(R.id.progress_widget);
+        mProgressWidget.setEmptyText("Empty :\\");
+        mProgressWidget.setErrorText("Error :(");
         view.findViewById(R.id.content).setOnClickListener(this);
         view.findViewById(R.id.progress).setOnClickListener(this);
         view.findViewById(R.id.empty).setOnClickListener(this);
@@ -36,30 +36,20 @@ public class ProgressWidgetFragment extends Fragment implements View.OnClickList
     }
 
     @Override
-    public void onActivityCreated(final Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-        mProgressSwitcher = ProgressSwitcher.fromRootView(getActivity(), getView());
-        mProgressSwitcher.setEmptyText("Empty :\\");
-        mProgressSwitcher.setErrorText("Error :(");
-        mProgressSwitcher.addContentView(R.layout.view_content);
-    }
-
-    @Override
     public void onClick(final View view) {
         final int id = view.getId();
         switch (id) {
             case R.id.progress:
-                mProgressSwitcher.showProgress();
+                mProgressWidget.showProgress();
                 break;
             case R.id.content:
-                mProgressSwitcher.showContent();
+                mProgressWidget.showContent();
                 break;
             case R.id.empty:
-                mProgressSwitcher.showEmpty();
+                mProgressWidget.showEmpty();
                 break;
             case R.id.error:
-                mProgressSwitcher.showError();
+                mProgressWidget.showError();
                 break;
             default:
                 break;
