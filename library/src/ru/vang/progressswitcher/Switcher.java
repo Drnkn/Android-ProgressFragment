@@ -19,7 +19,7 @@ public interface Switcher {
     /**
      * Add the content content from a layout resource.
      *
-     * @param layoutResId Resource Id to be inflated.
+     * @param layoutResId resource Id to be inflated.
      * @see #addContentView(android.view.View)
      * @see #setContentView(android.view.View)
      * @see #setContentView(int)
@@ -31,7 +31,7 @@ public interface Switcher {
      * Add the content view to an explicit view. If the content view was
      * installed earlier, the content will be replaced with a new view.
      *
-     * @param view The desired content to display. Value can't be null.
+     * @param view the desired content to display, can't be null.
      * @see #addContentView(int)
      * @see #setContentView(int)
      * @see #setContentView(android.view.View)
@@ -279,7 +279,8 @@ public interface Switcher {
 
     /**
      * If you want provide some action by clicking on specific view in error
-     * layout, you can set listener here.
+     * layout, you can set listener here. You can use {@link ru.vang.progressswitcher.R.id#retry
+     * R.id.retry} to set listener to "Retry" button in default layout.
      *
      * @param onClickListener On error view click listener
      * @param viewId          View id to which listener shall be assigned

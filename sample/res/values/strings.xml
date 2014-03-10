@@ -17,17 +17,20 @@
 -->
 <resources>
 
-    <string name="app_name">Android-ProgressFragment</string>
-    <string name="menu_refresh">Refresh</string>
-    <string name="title">New York City</string>
-    <string name="description">New York is the most populous city in the United States and the center of the New York
-        Metropolitan Area, one of the most populous urban agglomerations in the world. The city is referred to as New
-        York City or the City of New York to distinguish it from the State of New York, of which it is a part. A global
-        power city, New York exerts a significant impact upon commerce, finance, media, art, fashion, research,
-        technology, education, and entertainment. The home of the United Nations Headquarters, New York is an important
-        center for international diplomacy and has been described as the cultural capital of the world.</string>
-    <string name="empty">No Data</string>
-    <string name="loading">Loading&#8230;</string>
-    <string name="error">Terrible error :(</string>
+    <string name="app_name">ProgressSwitcher</string>
+    <string name="title">Moose</string>
+    <string name="description">The moose (North America) or Eurasian elk (Europe) (Alces alces)
+        is the largest extant species in the deer family. Moose are distinguished by the palmate
+        antlers of the males; other members of the family have antlers with a dendritic ("twig-like")
+        configuration. Moose typically inhabit boreal and mixed deciduous forests of the Northern
+        Hemisphere in temperate to subarctic climates. Moose used to have a much wider range but
+        hunting and other human activities greatly reduced it over the years. Moose have been
+        reintroduced to some of their former habitats. Currently, most moose are found in Canada,
+        Alaska, Scandinavia and Russia. Their diet consists of both terrestrial and aquatic
+        vegetation. The most common moose predators are wolves, bears, and humans. Unlike most
+        other deer species, moose are solitary animals and do not form herds. Although generally
+        slow-moving and sedentary, moose can become aggressive and move surprisingly quickly if
+        angered or startled. Their mating season in the autumn can lead to spectacular fights
+        between males competing for a female.</string>
 
 </resources>

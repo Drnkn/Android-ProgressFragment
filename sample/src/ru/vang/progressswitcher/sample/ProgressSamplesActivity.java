@@ -23,12 +23,9 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-/**
- * @author Evgeny Shishkin
- */
 public class ProgressSamplesActivity extends ListActivity {
 
-    private String[] examples = new String[]{"From root", "From content", "Progress widget"};
+    private String[] examples = new String[]{"ProgressFragment", "ProgressSwitcher", "ProgressWidget", "Custom layouts"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,11 +42,19 @@ public class ProgressSamplesActivity extends ListActivity {
         switch (position) {
             case 0:
                 intent.putExtra(ProgressActivity.EXTRA_FRAGMENT,
-                        ProgressActivity.FRAGMENT_FROM_ROOT);
+                        ProgressActivity.FRAGMENT_PROGRESS_FRAGMENT);
                 break;
             case 1:
                 intent.putExtra(ProgressActivity.EXTRA_FRAGMENT,
-                        ProgressActivity.FRAGMENT_FROM_ROOT);
+                        ProgressActivity.FRAGMENT_SWITCHER);
+                break;
+            case 2:
+                intent.putExtra(ProgressActivity.EXTRA_FRAGMENT,
+                        ProgressActivity.FRAGMENT_WIDGET);
+                break;
+            case 3:
+                intent.putExtra(ProgressActivity.EXTRA_FRAGMENT,
+                        ProgressActivity.FRAGMENT_CUSTOM_LAYOUTS);
                 break;
             default:
                 break;

@@ -2,6 +2,8 @@ package ru.vang.progressswitcher;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,8 +12,11 @@ import android.widget.FrameLayout;
 public class ProgressWidget extends FrameLayout implements Switcher {
 
     private ProgressSwitcher mProgressSwitcher;
+
     private int mProgressViewResId;
+
     private int mEmptyViewResId;
+
     private int mErrorViewResId;
 
     private ProgressWidget(final Context context) {
@@ -37,11 +42,11 @@ public class ProgressWidget extends FrameLayout implements Switcher {
             mProgressViewResId = typedArray.getResourceId(
                     R.styleable.ProgressWidget_progressViewLayout,
                     R.layout.progress_view);
-            mErrorViewResId = typedArray.getResourceId(
-                    R.styleable.ProgressWidget_errorViewLayout,
-                    R.layout.error_view);
             mEmptyViewResId = typedArray.getResourceId(
                     R.styleable.ProgressWidget_emptyViewLayout,
+                    R.layout.empty_view);
+            mErrorViewResId = typedArray.getResourceId(
+                    R.styleable.ProgressWidget_errorViewLayout,
                     R.layout.error_view);
 
             final int animationIn = typedArray.getResourceId(R.styleable.ProgressWidget_animationIn,
@@ -69,12 +74,31 @@ public class ProgressWidget extends FrameLayout implements Switcher {
 
         final View content = getChildAt(0);
         final LayoutInflater inflater = LayoutInflater.from(getContext());
-        inflater.inflate(mProgressViewResId, this);
-        inflater.inflate(mEmptyViewResId, this);
-        inflater.inflate(mErrorViewResId, this);
+        final View progressView = inflater.inflate(mProgressViewResId, this, false);
+        final View emptyView = inflater.inflate(mEmptyViewResId, this, false);
+        final View errorView = inflater.inflate(mErrorViewResId, this, false);
 
         mProgressSwitcher.setContentContainer(this);
+        mProgressSwitcher.addProgressView(progressView);
+        mProgressSwitcher.addEmptyView(emptyView);
+        mProgressSwitcher.addErrorView(errorView);
         mProgressSwitcher.setContentView(content);
+    }
+
+    protected Parcelable onSaveInstanceState() {
+        final Parcelable superState = super.onSaveInstanceState();
+        final SavedState ss = new SavedState(superState);
+        ss.shownType = mProgressSwitcher.getShownContentType();
+
+        return ss;
+    }
+
+    @Override
+    public void onRestoreInstanceState(final Parcelable state) {
+        final SavedState ss = (SavedState) state;
+        super.onRestoreInstanceState(ss.getSuperState());
+
+        mProgressSwitcher.setContentShown(ss.shownType, false);
     }
 
     @Override
@@ -227,5 +251,40 @@ public class ProgressWidget extends FrameLayout implements Switcher {
     @Override
     public boolean isErrorViewDisplayed() {
         return mProgressSwitcher.isErrorViewDisplayed();
+    }
+
+    private static class SavedState extends BaseSavedState {
+
+        int shownType;
+
+        SavedState(final Parcelable superState) {
+            super(superState);
+        }
+
+        /**
+         * Constructor called from {@link #CREATOR}
+         */
+        private SavedState(final Parcel in) {
+            super(in);
+            shownType = in.readInt();
+        }
+
+        @Override
+        public void writeToParcel(final Parcel out, final int flags) {
+            super.writeToParcel(out, flags);
+            out.writeInt(shownType);
+        }
+
+        public static final Parcelable.Creator<SavedState> CREATOR
+                = new Parcelable.Creator<SavedState>() {
+            public SavedState createFromParcel(Parcel in) {
+                return new SavedState(in);
+            }
+
+            public SavedState[] newArray(int size) {
+                return new SavedState[size];
+            }
+        };
+
     }
 }

@@ -11,5 +11,7 @@
     <item name="empty_view" type="id" />
     <!-- View id for error view -->
     <item name="error_view" type="id" />
+    <!-- View id for retry button in error view -->
+    <item name="retry" type="id" />
 
 </resources>

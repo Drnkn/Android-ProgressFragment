@@ -22,47 +22,79 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.view.MenuItem;
+import android.view.View;
 
 /**
  * @author Evgeny Shishkin
  */
-public class ProgressActivity extends FragmentActivity {
-    public static final String EXTRA_TITLE = "ru.vang.progressfragment.sample.extras.EXTRA_TITLE";
-    public static final String EXTRA_FRAGMENT = "ru.vang.progressfragment.sample.extras.EXTRA_FRAGMENT";
-    public static final int FRAGMENT_FROM_ROOT = 0;
-    public static final int FRAGMENT_FROM_CONTENT = 1;
-    public static final int FRAGMENT_PROGRESS_WIDGET = 2;
+public class ProgressActivity extends FragmentActivity implements View.OnClickListener {
 
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    public static final String EXTRA_TITLE = "ru.vang.progressfragment.sample.extras.EXTRA_TITLE";
+
+    public static final String EXTRA_FRAGMENT
+            = "ru.vang.progressfragment.sample.extras.EXTRA_FRAGMENT";
+
+    public static final int FRAGMENT_PROGRESS_FRAGMENT = 0;
+
+    public static final int FRAGMENT_SWITCHER = 1;
+
+    public static final int FRAGMENT_WIDGET = 2;
+
+    public static final int FRAGMENT_CUSTOM_LAYOUTS = 3;
+
+    private static final String TAG_FRAGMENT = "fragment_progress";
+
+    public interface OnSwitchListener {
+
+        public void showProgress();
+
+        public void showContent();
+
+        public void showEmpty();
+
+        public void showError();
+
+    }
+
+    private Fragment mFragment;
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setTitle(getIntent().getStringExtra(EXTRA_TITLE));
+        setContentView(R.layout.actvitiy_progress);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            getActionBar().setDisplayHomeAsUpEnabled(true);
+            new ActionBarHelper().setDisplayHomeAsUpEnabled(true);
         }
-        // Check what fragment is shown, replace if needed.
-        Fragment fragment = getSupportFragmentManager().findFragmentById(
-                android.R.id.content);
-        if (fragment == null) {
-            // Make new fragment to show.
-            int fragmentId = getIntent().getIntExtra(EXTRA_FRAGMENT, FRAGMENT_FROM_ROOT);
+
+        findViewById(R.id.action_progress).setOnClickListener(this);
+        findViewById(R.id.action_content).setOnClickListener(this);
+        findViewById(R.id.action_empty).setOnClickListener(this);
+        findViewById(R.id.action_error).setOnClickListener(this);
+
+        if (savedInstanceState == null) {
+            int fragmentId = getIntent().getIntExtra(EXTRA_FRAGMENT, FRAGMENT_PROGRESS_FRAGMENT);
             switch (fragmentId) {
-                case FRAGMENT_FROM_ROOT:
-                    fragment = ProgressSwitcherFromRootFragment.newInstance();
+                case FRAGMENT_PROGRESS_FRAGMENT:
+                    mFragment = ProgressFragmentSampleFragment.newInstance();
                     break;
-                case FRAGMENT_FROM_CONTENT:
-                    fragment = ProgressSwitcherFromContentFragment.newInstance();
+                case FRAGMENT_SWITCHER:
+                    mFragment = ProgressSwitcherFragment.newInstance();
                     break;
-                case FRAGMENT_PROGRESS_WIDGET:
-                    fragment = ProgressWidgetFragment.newInstance();
+                case FRAGMENT_WIDGET:
+                    mFragment = ProgressWidgetFragment.newInstance();
+                    break;
+                case FRAGMENT_CUSTOM_LAYOUTS:
+                    mFragment = CustomLayoutsFragment.newInstance();
                     break;
                 default:
                     throw new IllegalArgumentException("Incorrect index: " + fragmentId);
 
             }
             getSupportFragmentManager().beginTransaction()
-                    .add(android.R.id.content, fragment).commit();
+                    .add(R.id.container, mFragment, TAG_FRAGMENT).commit();
+        } else {
+            mFragment = getSupportFragmentManager().findFragmentByTag(TAG_FRAGMENT);
         }
     }
 
@@ -74,6 +106,34 @@ public class ProgressActivity extends FragmentActivity {
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    public void onClick(final View view) {
+        final int id = view.getId();
+        final OnSwitchListener localFragment = (OnSwitchListener) mFragment;
+        switch (id) {
+            case R.id.action_progress:
+                localFragment.showProgress();
+                break;
+            case R.id.action_content:
+                localFragment.showContent();
+                break;
+            case R.id.action_empty:
+                localFragment.showEmpty();
+                break;
+            case R.id.action_error:
+                localFragment.showError();
+                break;
+        }
+    }
+
+    class ActionBarHelper {
+
+        @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+        void setDisplayHomeAsUpEnabled(boolean showHomeAsUp) {
+            getActionBar().setDisplayHomeAsUpEnabled(showHomeAsUp);
         }
     }
 }

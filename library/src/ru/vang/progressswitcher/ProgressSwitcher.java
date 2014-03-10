@@ -24,6 +24,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
+
 public class ProgressSwitcher implements Switcher {
 
     public static final int TYPE_PROGRESS = 0;
@@ -73,10 +74,53 @@ public class ProgressSwitcher implements Switcher {
         initViewsFromRoot(rootView);
     }
 
+    /**
+     * Create instance of {@link ru.vang.progressswitcher.ProgressSwitcher ProgressSwitcher}
+     * from provided views hierarchy. views hierarchy should have the following structure:
+     * ...
+     * <FrameLayout
+     * ...
+     * android:id="@id/content_container"
+     * ...>
+     *
+     * <include
+     * android:id="@id/progress_view"
+     * layout="@layout/progress_view" />
+     *
+     * <include
+     * android:id="@id/empty_view"
+     * layout="@layout/empty_view" />
+     *
+     * <include
+     * android:id="@id/error_view"
+     * layout="@layout/error_view" />
+     *
+     * </FrameLayout>
+     * ...
+     * Content view can be included directly in layout with id {@link ru.vang.progressswitcher.R.id#content_view
+     * R.id.content_view} or added by {@link #addContentView(android.view.View)} method.
+     *
+     * @param context  app context
+     * @param rootView view from which {@link ru.vang.progressswitcher.ProgressSwitcher
+     *                 ProgressSwitcher} will be created
+     * @return instance of {@link ru.vang.progressswitcher.ProgressSwitcher
+     * ProgressSwitcher}
+     */
     public static ProgressSwitcher fromRootView(final Context context, final View rootView) {
         return new ProgressSwitcher(context, rootView);
     }
 
+    /**
+     * Wrap content view with defaults views and create instance of {@link
+     * ru.vang.progressswitcher.ProgressSwitcher
+     * ProgressSwitcher}. Default view can be set by  {@link #setDefaultProgressView(int)},
+     * {@link #setDefaultEmptyView(int)}, {@link #setDefaultErrorView(int)}
+     *
+     * @param context     app context
+     * @param contentView the desired content to display, can't be null and must be attached to parent
+     * @return instance of {@link ru.vang.progressswitcher.ProgressSwitcher
+     * ProgressSwitcher}
+     */
     public static ProgressSwitcher fromContentView(final Context context, final View contentView) {
         if (contentView == null) {
             throw new NullPointerException("Content view can't be null");
@@ -107,14 +151,32 @@ public class ProgressSwitcher implements Switcher {
         return new ProgressSwitcher(context, parent);
     }
 
+    /**
+     * Set default layout for progress view
+     *
+     * @param layoutId default layout
+     * @see #fromContentView(android.content.Context, android.view.View)
+     */
     public static void setDefaultProgressView(final int layoutId) {
         sDefaultProgressView = layoutId;
     }
 
+    /**
+     * Set default layout for empty view
+     *
+     * @param layoutId default layout
+     * @see #fromContentView(android.content.Context, android.view.View)
+     */
     public static void setDefaultEmptyView(final int layoutId) {
         sDefaultEmptyView = layoutId;
     }
 
+    /**
+     * Set default layout for error view
+     *
+     * @param layoutId default layout
+     * @see #fromContentView(android.content.Context, android.view.View)
+     */
     public static void setDefaultErrorView(final int layoutId) {
         sDefaultErrorView = layoutId;
     }
@@ -150,7 +212,6 @@ public class ProgressSwitcher implements Switcher {
         mContentView = view;
     }
 
-    // TODO set progress view, error view, empty view in the same way?
     @Override
     public void setContentView(final int contentViewId) {
         ensureContent();
@@ -365,10 +426,65 @@ public class ProgressSwitcher implements Switcher {
         initViewFromContentContainer(content);
     }
 
+    void addProgressView(final View progressView) {
+        if (progressView == null) {
+            throw new NullPointerException("Progress view can't be null");
+        }
+        mProgressView = progressView;
+        mContentContainer.addView(progressView);
+    }
+
+    void addEmptyView(final View emptyView) {
+        if (emptyView == null) {
+            throw new NullPointerException("Empty view can't be null");
+        }
+        mEmptyView = emptyView;
+        mContentContainer.addView(emptyView);
+        emptyView.setVisibility(View.GONE);
+    }
+
+    void addErrorView(final View errorView) {
+        if (errorView == null) {
+            throw new NullPointerException("Error view can't be null");
+        }
+        mErrorView = errorView;
+        mContentContainer.addView(errorView);
+        errorView.setVisibility(View.GONE);
+    }
+
     void reset() {
         mContentTypeShown = TYPE_PROGRESS;
         mErrorView = mProgressView = mContentView = mEmptyView = null;
         mContentContainer = null;
+    }
+
+
+    void setContentShown(final int type, final boolean animate) {
+        ensureContent();
+        if (mContentTypeShown == type) {
+            return;
+        }
+        switch (type) {
+            case TYPE_PROGRESS:
+                showView(mProgressView, animate);
+                break;
+            case TYPE_CONTENT:
+                showView(mContentView, animate);
+                break;
+            case TYPE_EMPTY:
+                showView(mEmptyView, animate);
+                break;
+            case TYPE_ERROR:
+                showView(mErrorView, animate);
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown view type: " + type);
+        }
+        mContentTypeShown = type;
+    }
+
+    int getShownContentType() {
+        return mContentTypeShown;
     }
 
     private void initViewsFromRoot(final View rootView) {
@@ -400,48 +516,35 @@ public class ProgressSwitcher implements Switcher {
         if (mContentContainer == null) {
             throw new IllegalStateException("Content container not yet set");
         }
-        mProgressView = mContentContainer.findViewById(R.id.progress_view);
-        mContentView = mContentContainer.findViewById(R.id.content_view);
-        if (mContentView != null) {
-            mContentView.setVisibility(View.GONE);
+        if (mProgressView == null || mContentContainer.indexOfChild(mProgressView) < 0) {
+            mProgressView = mContentContainer.findViewById(R.id.progress_view);
+            if (mProgressView != null) {
+                mShownView = mProgressView;
+            }
         }
-        mEmptyView = mContentContainer.findViewById(R.id.empty_view);
-        if (mEmptyView != null) {
-            mEmptyView.setVisibility(View.GONE);
+        if (mContentView == null || mContentContainer.indexOfChild(mContentView) < 0) {
+            mContentView = mContentContainer.findViewById(R.id.content_view);
+            if (mContentView != null) {
+                mContentView.setVisibility(View.GONE);
+            }
         }
-        mErrorView = mContentContainer.findViewById(R.id.error_view);
-        if (mErrorView != null) {
-            mErrorView.setVisibility(View.GONE);
+        if (mEmptyView == null || mContentContainer.indexOfChild(mEmptyView) < 0) {
+            mEmptyView = mContentContainer.findViewById(R.id.empty_view);
+            if (mEmptyView != null) {
+                mEmptyView.setVisibility(View.GONE);
+            }
+        }
+        if (mErrorView == null || mContentContainer.indexOfChild(mErrorView) < 0) {
+            mErrorView = mContentContainer.findViewById(R.id.error_view);
+            if (mErrorView != null) {
+                mErrorView.setVisibility(View.GONE);
+            }
         }
         // We are starting without a content, so assume we won't
         // have our data right away and start with the progress indicator.
         if (mContentView == null && mProgressView != null) {
             showView(mProgressView, false);
         }
-    }
-
-    private void setContentShown(final int type, final boolean animate) {
-        ensureContent();
-        if (mContentTypeShown == type) {
-            return;
-        }
-        switch (type) {
-            case TYPE_PROGRESS:
-                showView(mProgressView, animate);
-                break;
-            case TYPE_CONTENT:
-                showView(mContentView, animate);
-                break;
-            case TYPE_EMPTY:
-                showView(mEmptyView, animate);
-                break;
-            case TYPE_ERROR:
-                showView(mErrorView, animate);
-                break;
-            default:
-                throw new IllegalArgumentException("Unknown view type: " + type);
-        }
-        mContentTypeShown = type;
     }
 
     private void showView(final View view, final boolean animate) {
