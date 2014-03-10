@@ -48,9 +48,15 @@ public void setOnErrorViewClickListener(OnClickListener onClickListener, int vie
 Declare widget in layout:
 ``` xml
 <ru.vang.progressswitcher.ProgressWidget xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:progress="http://schemas.android.com/apk/res-auto"
     android:id="@+id/progress_widget"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    progress:emptyViewLayout="@layout/custom_empty_view"
+    progress:errorViewLayout="@layout/custom_error_view"
+    progress:progressViewLayout="@layout/custom_progress_view"
+    progress:animationIn="@anim/zoom_in"
+    progress:animationOut="@anim/zoom_out">
 
     <include layout="@layout/view_content" />
 
