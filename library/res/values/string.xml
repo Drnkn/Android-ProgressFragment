@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="empty">No content</string>
+    <string name="error">An error has occurred</string>
+    <string name="retry">Retry</string>
+</resources>

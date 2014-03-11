@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="action_progress" type="id"/>
+    <item name="action_content" type="id"/>
+    <item name="action_empty" type="id"/>
+    <item name="action_error" type="id"/>
+</resources>
