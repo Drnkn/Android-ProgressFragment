@@ -8,6 +8,16 @@ Compatibility
 
 This library is compatible from API 4 (Android 1.6).
 
+Sample
+------
+
+A sample can be found on Google Play:
+
+<a href="https://play.google.com/store/apps/details?id=ru.vang.progressswitcher.sample">
+  <img alt="Get it on Google Play"
+       src="http://www.android.com/images/brand/get_it_on_play_logo_small.png" />
+</a>
+
 Usage
 -----
 
