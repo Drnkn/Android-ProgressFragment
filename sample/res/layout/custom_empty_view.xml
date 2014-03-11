@@ -12,7 +12,7 @@
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
         android:gravity="center"
-        android:text="Thank you!\nBut your data the on  another screen!"
+        android:text="Thank you!\nBut your data on the another screen!"
         android:layout_centerHorizontal="true"
         android:textStyle="bold"
         android:layout_above="@+id/toad"
