@@ -339,7 +339,8 @@ public class ProgressSwitcher implements Switcher {
         if (mErrorView == null) {
             throw new IllegalStateException("Error view should be specified in layout");
         }
-        setTextInternal(text, mErrorView);
+        final View errorTextView = mErrorView.findViewById(R.id.error_text);
+        setTextInternal(text, errorTextView);
     }
 
     @Override
