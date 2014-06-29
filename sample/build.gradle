@@ -6,12 +6,11 @@ dependencies {
 
 android {
     compileSdkVersion 19
-    buildToolsVersion "19.0.1"
+    buildToolsVersion '19.1.0'
     defaultConfig {
         minSdkVersion 4
         targetSdkVersion 19
     }
-
     sourceSets {
         main {
             manifest.srcFile 'AndroidManifest.xml'
@@ -35,12 +34,9 @@ android {
         debug.setRoot('build-types/debug')
         release.setRoot('build-types/release')
     }
-
     Properties props = new Properties()
     props.load(new FileInputStream(file(project.property("ProgressSwitcherSamples.properties"))))
-
     signingConfigs {
-
         release {
             storeFile file(props['keystore'])
             storePassword props['keystore.password']
@@ -48,12 +44,13 @@ android {
             keyPassword props['keyPassword']
         }
     }
-
     buildTypes {
         release {
             runProguard true
             proguardFile getDefaultProguardFile('proguard-android.txt')
             signingConfig signingConfigs.release
         }
+    }
+    productFlavors {
     }
 }

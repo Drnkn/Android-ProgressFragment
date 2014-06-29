@@ -77,6 +77,7 @@ public class ProgressFragment extends Fragment implements Switcher {
         mProgressSwitcher.setRootView(view);
     }
 
+    @Override
     public void onViewStateRestored(final Bundle savedInstanceState) {
         super.onViewStateRestored(savedInstanceState);
         if (savedInstanceState != null) {
@@ -225,7 +226,7 @@ public class ProgressFragment extends Fragment implements Switcher {
     @Override
     public void setOnErrorViewClickListener(final OnClickListener onClickListener,
             final int viewId) {
-        mProgressSwitcher.setOnErrorViewClickListener(onClickListener);
+        mProgressSwitcher.setOnErrorViewClickListener(onClickListener, viewId);
     }
 
     @Override

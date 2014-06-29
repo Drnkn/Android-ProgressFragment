@@ -35,11 +35,11 @@ public class ProgressSwitcher implements Switcher {
 
     public static final int TYPE_ERROR = 3;
 
-    private static int sDefaultProgressView = R.layout.progress_view;
+    private static int sDefaultProgressView = R.layout.ps_progress_view;
 
-    private static int sDefaultEmptyView = R.layout.empty_view;
+    private static int sDefaultEmptyView = R.layout.ps_empty_view;
 
-    private static int sDefaultErrorView = R.layout.error_view;
+    private static int sDefaultErrorView = R.layout.ps_error_view;
 
     static final int DEFAULT_ANIMATION_IN = android.R.anim.fade_in;
 
@@ -85,15 +85,15 @@ public class ProgressSwitcher implements Switcher {
      *
      * <include
      * android:id="@id/progress_view"
-     * layout="@layout/progress_view" />
+     * layout="@layout/ps_progress_view" />
      *
      * <include
      * android:id="@id/empty_view"
-     * layout="@layout/empty_view" />
+     * layout="@layout/ps_empty_view" />
      *
      * <include
      * android:id="@id/error_view"
-     * layout="@layout/error_view" />
+     * layout="@layout/ps_error_view" />
      *
      * </FrameLayout>
      * ...
@@ -117,7 +117,8 @@ public class ProgressSwitcher implements Switcher {
      * {@link #setDefaultEmptyView(int)}, {@link #setDefaultErrorView(int)}
      *
      * @param context     app context
-     * @param contentView the desired content to display, can't be null and must be attached to parent
+     * @param contentView the desired content to display, can't be null and must be attached to
+     *                    parent
      * @return instance of {@link ru.vang.progressswitcher.ProgressSwitcher
      * ProgressSwitcher}
      */
@@ -390,6 +391,7 @@ public class ProgressSwitcher implements Switcher {
         if (mErrorView == null) {
             throw new IllegalStateException("Error view should be provided in layout");
         }
+        addDefaultErrorButtonIfNecessary(viewId);
         setOnClickListenerToView(mErrorView, onClickListener, viewId);
     }
 
@@ -591,6 +593,23 @@ public class ProgressSwitcher implements Switcher {
         }
 
         targetView.setOnClickListener(onClickListener);
+    }
+
+    private void addDefaultErrorButtonIfNecessary(final int viewId) {
+        if (mErrorView.getId() != R.id.error_view) {
+            return;
+        }
+
+        if (viewId != R.id.retry) {
+            return;
+        }
+
+        final View localView = mErrorView.findViewById(R.id.retry);
+        if (localView != null) {
+            return;
+        }
+
+        LayoutInflater.from(mContext).inflate(R.layout.retry_button, (ViewGroup) mErrorView);
     }
 
     public static class Builder {

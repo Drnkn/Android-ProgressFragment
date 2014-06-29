@@ -29,6 +29,12 @@ public class ProgressFragmentSampleFragment extends BaseProgressSwitcherFragment
         super.onActivityCreated(savedInstanceState);
 
         addContentView(mContentView);
+        setOnErrorViewClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        }, R.id.retry);
     }
 
 }

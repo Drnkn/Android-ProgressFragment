@@ -41,13 +41,13 @@ public class ProgressWidget extends FrameLayout implements Switcher {
         try {
             mProgressViewResId = typedArray.getResourceId(
                     R.styleable.ProgressWidget_progressViewLayout,
-                    R.layout.progress_view);
+                    R.layout.ps_progress_view);
             mEmptyViewResId = typedArray.getResourceId(
                     R.styleable.ProgressWidget_emptyViewLayout,
-                    R.layout.empty_view);
+                    R.layout.ps_empty_view);
             mErrorViewResId = typedArray.getResourceId(
                     R.styleable.ProgressWidget_errorViewLayout,
-                    R.layout.error_view);
+                    R.layout.ps_error_view);
 
             final int animationIn = typedArray.getResourceId(R.styleable.ProgressWidget_animationIn,
                     ProgressSwitcher.DEFAULT_ANIMATION_IN);
@@ -85,6 +85,7 @@ public class ProgressWidget extends FrameLayout implements Switcher {
         mProgressSwitcher.setContentView(content);
     }
 
+    @Override
     protected Parcelable onSaveInstanceState() {
         final Parcelable superState = super.onSaveInstanceState();
         final SavedState ss = new SavedState(superState);
@@ -277,10 +278,13 @@ public class ProgressWidget extends FrameLayout implements Switcher {
 
         public static final Parcelable.Creator<SavedState> CREATOR
                 = new Parcelable.Creator<SavedState>() {
+
+            @Override
             public SavedState createFromParcel(Parcel in) {
                 return new SavedState(in);
             }
 
+            @Override
             public SavedState[] newArray(int size) {
                 return new SavedState[size];
             }
