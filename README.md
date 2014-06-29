@@ -4,6 +4,7 @@ Android-ProgressSwitcher
 The library is used to switch between content, progress, empty or error views. The main The progress is displayed during initial data loading. If data is empty then empty view is displayed. The same goes for error view. The work was based on [Android-ProgressFragment](https://github.com/johnkil/Android-ProgressFragment) project, but with a more declarative setup and state persistence.
 
 [AAR](https://github.com/Drnkn/Android-ProgressSwitcher/blob/master/ProgressSwitcher.aar)
+
 [Sample apk](https://github.com/Drnkn/Android-ProgressSwitcher/blob/master/ProgressSwitcher-Sample.apk)
 
 
