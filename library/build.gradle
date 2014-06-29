@@ -35,20 +35,3 @@ android {
     productFlavors {
     }
 }
-
-uploadArchives {
-    repositories {
-        mavenDeployer {
-            repository(url: 'http://nexus.intech-global.com/content/repositories/thirdparty/') {
-                authentication(userName: 'deployment', password: 'deployment123')
-            }
-            pom.version = versionName
-            pom.artifactId = artifactId
-            pom.groupId = groupId
-            pom.project {
-                name 'Progress Switcher'
-                packaging 'aar'
-            }
-        }
-    }
-}
