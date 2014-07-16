@@ -11,7 +11,7 @@ Dependencies
 [AAR](https://github.com/Drnkn/Android-ProgressSwitcher/blob/master/ProgressSwitcher.aar)
 
 The project now in Maven Central, so you can add dependency
-``` java
+``` xml
 dependencies {
     compile 'com.github.drnkn:progress-switcher:1.1.3@aar'
 }
