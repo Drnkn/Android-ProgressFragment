@@ -31,7 +31,14 @@ android {
         debug.setRoot('build-types/debug')
         release.setRoot('build-types/release')
     }
-    defaultConfig {}
+    defaultConfig {
+        minSdkVersion 4
+        targetSdkVersion 19
+        versionName project.VERSION_NAME
+        versionCode Integer.parseInt(project.VERSION_CODE)
+    }
     productFlavors {
     }
 }
+
+apply from: '../maven_push.gradle'
